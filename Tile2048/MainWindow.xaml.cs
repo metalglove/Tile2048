@@ -49,7 +49,10 @@ namespace Tile2048
             List<Point> availablePoints = allPoints.Except(Tiles.ToListOfPoints()).ToList();
             return availablePoints.ElementAt(rSpawnTile.Next(0, availablePoints.Count));
         }
-
+        private int Get2Or4()
+        {
+            return rSpawnTile.Next(0, 100) >= 90 ? 4 : 2;
+        }
         private static List<Point> GenerateAllPossiblePoints()
         {
             List<Point> allPoints = new List<Point>();
@@ -60,11 +63,6 @@ namespace Tile2048
                 return true;
             }));
             return allPoints;
-        }
-
-        private int Get2Or4()
-        {
-            return rSpawnTile.Next(0, 100) >= 90 ? 4 : 2;
         }
         #endregion Game
 
@@ -101,6 +99,7 @@ namespace Tile2048
                                         // merge
                                         OtherTile.Number += currentTile.Number;
                                         Tiles.Remove(currentTile);
+                                        tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
                                     }
                                     else
                                     {
@@ -109,7 +108,6 @@ namespace Tile2048
                                         {
                                             currentTile.Row = deepRow + 1;
                                         }
-                                        continue;
                                     }
                                 }
                                 else
@@ -128,20 +126,68 @@ namespace Tile2048
                     }
                 }
             }
+            SpawnTile();
         }
         private void SlideLeft(object sender, RoutedEventArgs e)
         {
-            foreach (Tile item in Tiles)
+            for (int row = 0; row <= 3; row++)
             {
-                int row = item.Row;
-                int col = item.Column;
-
-                if (row == 0)
+                List<Tile> tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                if (tilesOnRow.Any())
                 {
-                    continue;
+                    if (tilesOnRow.Count == 1 && tilesOnRow.Single().Column != 0)
+                    {
+                        Tiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 0;
+                    }
+                    else
+                    {
+                        // shift until the left or until a tile is found
+                        // check if they are the same number ifso, sum and merge to one tile.
+                        for (int column = 1; column <= 3; column++)
+                        {
+                            if (tilesOnRow.Any(tile => tile.Column == column))
+                            {
+                                Tile currentTile = tilesOnRow.SingleOrDefault(tile => tile.Column == column && tile.Row == row);
+                                int deepColumn = column;
+                                deeper:
+                                deepColumn--;
+                                bool OnSameLocationMinusDeepColumn(Tile tile) => tile.Row == row && tile.Column == deepColumn;
+                                if (tilesOnRow.Any(OnSameLocationMinusDeepColumn))
+                                {
+                                    Tile OtherTile = tilesOnRow.Single(OnSameLocationMinusDeepColumn);
+                                    if (OtherTile.Number == currentTile.Number)
+                                    {
+                                        // merge
+                                        OtherTile.Number += currentTile.Number;
+                                        Tiles.Remove(currentTile);
+                                        tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                                    }
+                                    else
+                                    {
+                                        // replace the one under if it is not the same already
+                                        if (!OnSameLocationMinusDeepColumn(currentTile))
+                                        {
+                                            currentTile.Column = deepColumn + 1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (deepColumn == 0)
+                                    {
+                                        currentTile.Column = deepColumn;
+                                    }
+                                    else
+                                    {
+                                        goto deeper;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-
             }
+            SpawnTile();
         }
         private void SlideDown(object sender, RoutedEventArgs e)
         {
@@ -175,6 +221,7 @@ namespace Tile2048
                                         // merge
                                         OtherTile.Number += currentTile.Number;
                                         Tiles.Remove(currentTile);
+                                        tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
                                     }
                                     else
                                     {
@@ -183,7 +230,6 @@ namespace Tile2048
                                         {
                                             currentTile.Row = deepRow - 1;
                                         }
-                                        continue;
                                     }
                                 }
                                 else
@@ -202,20 +248,68 @@ namespace Tile2048
                     }
                 }
             }
+            SpawnTile();
         }
         private void SlideRight(object sender, RoutedEventArgs e)
         {
-            foreach (Tile item in Tiles)
+            for (int row = 0; row <= 3; row++)
             {
-                int row = item.Row;
-                int col = item.Column;
-
-                if (row == 0)
+                List<Tile> tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                if (tilesOnRow.Any())
                 {
-                    continue;
+                    if (tilesOnRow.Count == 1 && tilesOnRow.Single().Column != 3)
+                    {
+                        Tiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 3;
+                    }
+                    else
+                    {
+                        // shift until the right or until a tile is found
+                        // check if they are the same number ifso, sum and merge to one tile.
+                        for (int column = 2; column >= 0; column--)
+                        {
+                            if (tilesOnRow.Any(tile => tile.Column == column))
+                            {
+                                Tile currentTile = tilesOnRow.SingleOrDefault(tile => tile.Column == column && tile.Row == row);
+                                int deepColumn = column;
+                                deeper:
+                                deepColumn++;
+                                bool OnSameLocationMinusDeepColumn(Tile tile) => tile.Row == row && tile.Column == deepColumn;
+                                if (tilesOnRow.Any(OnSameLocationMinusDeepColumn))
+                                {
+                                    Tile OtherTile = tilesOnRow.Single(OnSameLocationMinusDeepColumn);
+                                    if (OtherTile.Number == currentTile.Number)
+                                    {
+                                        // merge
+                                        OtherTile.Number += currentTile.Number;
+                                        Tiles.Remove(currentTile);
+                                        tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                                    }
+                                    else
+                                    {
+                                        // replace the one under if it is not the same already
+                                        if (!OnSameLocationMinusDeepColumn(currentTile))
+                                        {
+                                            currentTile.Column = deepColumn - 1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (deepColumn == 3)
+                                    {
+                                        currentTile.Column = deepColumn;
+                                    }
+                                    else
+                                    {
+                                        goto deeper;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-
             }
+            SpawnTile();
         }
         #endregion Movement
 
