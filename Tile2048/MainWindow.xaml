@@ -5,42 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tile2048"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="2048" FontSize="25" HorizontalAlignment="Center"/>
-        <ItemsControl ItemsSource="{Binding Tiles}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid Width="400" Height="400" ShowGridLines="True">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Grid.Row" Value="{Binding Row}" />
-                    <Setter Property="Grid.Column" Value="{Binding Column}" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:Tile}">
-                    <Viewbox>
-                        <TextBlock Text="{Binding Number}"/>
-                    </Viewbox>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <Button Click="Button_Click" Content="Test"/>
+        Title="MainWindow" Height="520" Width="800">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="2048" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <TextBlock Text="Score: " FontSize="20"/>
+                <TextBlock Text="{Binding Tiles.Score}" FontSize="20"/>
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Tiles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid Width="400" Height="400" ShowGridLines="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Grid.Row" Value="{Binding Row}" />
+                        <Setter Property="Grid.Column" Value="{Binding Column}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:Tile}">
+                        <Viewbox>
+                            <TextBlock Text="{Binding Number}"/>
+                        </Viewbox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Click="Button_Click" Content="Test"/>
+        </StackPanel>
+        <Grid Width="150" Height="150" Margin="50">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="UP" Click="SlideUp" Grid.Column="1" Grid.Row="0"/>
+            <Button Content="Left" Click="SlideLeft" Grid.Column="0" Grid.Row="1"/>
+            <Button Content="Down" Click="SlideDown" Grid.Column="1" Grid.Row="2"/>
+            <Button Content="Right" Click="SlideRight" Grid.Column="2" Grid.Row="1"/>
+        </Grid>
     </StackPanel>
 </Window>
