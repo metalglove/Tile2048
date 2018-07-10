@@ -1,28 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Tile2048
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private Random rSpawnTile = new Random();
+        private int[,] grid = new int[4, 4];
+        public ObservableCollection<Tile> Tiles { get; set; } = new ObservableCollection<Tile>(); 
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
         }
+
+        #region Game
+        private void StartGame()
+        {
+
+        }
+        private void EndGame()
+        {
+
+        }
+        #endregion Game
+
+        private void SpawnTile()
+        {
+            int number = Get2Or4();
+            int[,] position = GetAvailablePosition();
+            
+        }
+
+        private int[,] GetAvailablePosition()
+        {
+            throw new NotImplementedException();
+        }
+
+        private int Get2Or4()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class GameState
+    {
+
     }
 }
