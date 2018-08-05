@@ -38,17 +38,15 @@
                         <Setter Property="Grid.Column" Value="{Binding Column, NotifyOnTargetUpdated=True}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:Tile}">
                         <DataTemplate.Triggers>
                             <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                                <BeginStoryboard>
+                                <!--<BeginStoryboard>
                                     <Storyboard AutoReverse="True">
                                         <DoubleAnimation Storyboard.Target="{Binding}" Storyboard.TargetProperty="Opacity" From="1" To=".1" Duration="0:0:.3" />
-                                        <!--<ThicknessAnimation Storyboard.Target="{Binding}" Storyboard.TargetProperty="Margin" From="0,0,0,0" Duration="0:0:.5"/>-->
                                     </Storyboard>
-                                </BeginStoryboard>
+                                </BeginStoryboard>-->
                                 <SoundPlayerAction Source="/Resources/Move.wav"/>
                             </EventTrigger>
                         </DataTemplate.Triggers>

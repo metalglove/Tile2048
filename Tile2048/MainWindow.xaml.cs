@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Tile2048
 {
@@ -29,6 +30,23 @@ namespace Tile2048
             DataContext = this;
             allPoints = GenerateAllPossiblePoints();
             StartGame();
+            KeyDown += Slide;
+        }
+
+        private void Slide(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up || e.Key == Key.W)
+                SlideUp(this, new RoutedEventArgs());
+            else if (e.Key == Key.Down || e.Key == Key.S)
+                SlideDown(this, new RoutedEventArgs());
+            else if (e.Key == Key.Left || e.Key == Key.A)
+                SlideLeft(this, new RoutedEventArgs());
+            else if (e.Key == Key.Right || e.Key == Key.D)
+                SlideRight(this, new RoutedEventArgs());
+            else
+            {
+                MessageBox.Show("Use the arrow or AWSD keys to slide the numbers.");
+            }
         }
 
         #region Game
