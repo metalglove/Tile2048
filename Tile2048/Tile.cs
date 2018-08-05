@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Media;
 using System.Runtime.CompilerServices;
 
 namespace Tile2048
 {
-    public class Tile : INotifyPropertyChanged
+    public class Tile : INotifyPropertyChanged, ICloneable
     {
         private int number;
         private int row;
@@ -51,6 +52,11 @@ namespace Tile2048
             RaisePropertyChanged("Number");
             Row = row;
             Column = column;
+        }
+
+        public object Clone()
+        {
+            return new Tile(number, row, column);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

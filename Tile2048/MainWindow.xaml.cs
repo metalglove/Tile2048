@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -49,11 +48,6 @@ namespace Tile2048
             List<Point> availablePoints = allPoints.Except(Tiles.ToListOfPoints()).ToList();
             return availablePoints.ElementAt(rSpawnTile.Next(0, availablePoints.Count));
         }
-        private bool IsAllowedToSlide(/* direction enum?*/)
-        {
-            // check for specified direction if the slide is allowed.
-            return true;
-        }
         private int Get2Or4()
         {
             return rSpawnTile.Next(0, 100) >= 90 ? 4 : 2;
@@ -69,19 +63,40 @@ namespace Tile2048
             }));
             return allPoints;
         }
+        private void SpawnTileIfTilesChanged(GameState newTiles)
+        {
+            if (newTiles.Count == Tiles.Count)
+            {
+                for (int i = 0; i < Tiles.Count; i++)
+                {
+                    if (Tiles[i].Column != newTiles[i].Column || Tiles[i].Row != newTiles[i].Row)
+                    {
+                        Tiles = newTiles;
+                        SpawnTile();
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                Tiles = newTiles;
+                SpawnTile();
+            }
+        }
         #endregion Game
 
         #region Movement
         private void SlideUp(object sender, RoutedEventArgs e)
         {
-            for(int column = 0; column <= 3; column++)
+            GameState newTiles = (GameState)Tiles.Clone();
+            for (int column = 0; column <= 3; column++)
             {
-                List<Tile> tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
+                List<Tile> tilesOnColumn = newTiles.Where(item => item.Column == column).ToList();
                 if (tilesOnColumn.Any())
                 {
                     if (tilesOnColumn.Count == 1 && tilesOnColumn.Single().Row != 0)
                     {
-                        Tiles.Single(tile => tile.Row == tilesOnColumn[0].Row && tile.Column == tilesOnColumn[0].Column).Row = 0;
+                        newTiles.Single(tile => tile.Row == tilesOnColumn[0].Row && tile.Column == tilesOnColumn[0].Column).Row = 0;
                     }
                     else
                     {
@@ -103,8 +118,8 @@ namespace Tile2048
                                     {
                                         // merge
                                         OtherTile.Number += currentTile.Number;
-                                        Tiles.Remove(currentTile);
-                                        tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
+                                        newTiles.Remove(currentTile);
+                                        tilesOnColumn = newTiles.Where(item => item.Column == column).ToList();
                                     }
                                     else
                                     {
@@ -131,18 +146,19 @@ namespace Tile2048
                     }
                 }
             }
-            SpawnTile();
+            SpawnTileIfTilesChanged(newTiles);
         }
         private void SlideLeft(object sender, RoutedEventArgs e)
         {
+            GameState newTiles = (GameState)Tiles.Clone();
             for (int row = 0; row <= 3; row++)
             {
-                List<Tile> tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                List<Tile> tilesOnRow = newTiles.Where(item => item.Row == row).ToList();
                 if (tilesOnRow.Any())
                 {
                     if (tilesOnRow.Count == 1 && tilesOnRow.Single().Column != 0)
                     {
-                        Tiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 0;
+                        newTiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 0;
                     }
                     else
                     {
@@ -164,8 +180,8 @@ namespace Tile2048
                                     {
                                         // merge
                                         OtherTile.Number += currentTile.Number;
-                                        Tiles.Remove(currentTile);
-                                        tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                                        newTiles.Remove(currentTile);
+                                        tilesOnRow = newTiles.Where(item => item.Row == row).ToList();
                                     }
                                     else
                                     {
@@ -192,18 +208,19 @@ namespace Tile2048
                     }
                 }
             }
-            SpawnTile();
+            SpawnTileIfTilesChanged(newTiles);
         }
         private void SlideDown(object sender, RoutedEventArgs e)
         {
+            GameState newTiles = (GameState)Tiles.Clone();
             for (int column = 0; column <= 3; column++)
             {
-                List<Tile> tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
+                List<Tile> tilesOnColumn = newTiles.Where(item => item.Column == column).ToList();
                 if (tilesOnColumn.Any())
                 {
                     if (tilesOnColumn.Count == 1 && tilesOnColumn.Single().Row != 3)
                     {
-                        Tiles.Single(tile => tile.Row == tilesOnColumn[0].Row && tile.Column == tilesOnColumn[0].Column).Row = 3;
+                        newTiles.Single(tile => tile.Row == tilesOnColumn[0].Row && tile.Column == tilesOnColumn[0].Column).Row = 3;
                     }
                     else
                     {
@@ -225,8 +242,8 @@ namespace Tile2048
                                     {
                                         // merge
                                         OtherTile.Number += currentTile.Number;
-                                        Tiles.Remove(currentTile);
-                                        tilesOnColumn = Tiles.Where(item => item.Column == column).ToList();
+                                        newTiles.Remove(currentTile);
+                                        tilesOnColumn = newTiles.Where(item => item.Column == column).ToList();
                                     }
                                     else
                                     {
@@ -253,18 +270,19 @@ namespace Tile2048
                     }
                 }
             }
-            SpawnTile();
+            SpawnTileIfTilesChanged(newTiles);
         }
         private void SlideRight(object sender, RoutedEventArgs e)
         {
+            GameState newTiles = (GameState)Tiles.Clone();
             for (int row = 0; row <= 3; row++)
             {
-                List<Tile> tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                List<Tile> tilesOnRow = newTiles.Where(item => item.Row == row).ToList();
                 if (tilesOnRow.Any())
                 {
                     if (tilesOnRow.Count == 1 && tilesOnRow.Single().Column != 3)
                     {
-                        Tiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 3;
+                        newTiles.Single(tile => tile.Row == tilesOnRow[0].Row && tile.Column == tilesOnRow[0].Column).Column = 3;
                     }
                     else
                     {
@@ -286,8 +304,8 @@ namespace Tile2048
                                     {
                                         // merge
                                         OtherTile.Number += currentTile.Number;
-                                        Tiles.Remove(currentTile);
-                                        tilesOnRow = Tiles.Where(item => item.Row == row).ToList();
+                                        newTiles.Remove(currentTile);
+                                        tilesOnRow = newTiles.Where(item => item.Row == row).ToList();
                                     }
                                     else
                                     {
@@ -314,54 +332,12 @@ namespace Tile2048
                     }
                 }
             }
-            SpawnTile();
+            SpawnTileIfTilesChanged(newTiles);
         }
         #endregion Movement
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SpawnTile();
-        }
-
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
-        public void RaisePropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion INotifyPropertyChanged Members
-    }
-
-    public class GameState : ObservableCollection<Tile>, INotifyPropertyChanged
-    {
-        private int score = 0;
-        public int Score
-        {
-            get => score;
-            set
-            {
-                score = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public new void Add(Tile item)
-        {
-            Score += item.Number;
-            base.Add(item);
-        }
-        public List<Point> ToListOfPoints()
-        {
-            List<Point> points = new List<Point>();
-            foreach (Tile tile in this)
-            {
-                points.Add(new Point(tile.Row, tile.Column));
-            }
-            return points;
-        }
-
-        #region INotifyPropertyChanged Members
-        public new event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
