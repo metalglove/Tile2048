@@ -95,7 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\move.wav" />
+    <Resource Include="Resources\Grow.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Move.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

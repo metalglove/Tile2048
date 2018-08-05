@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Media;
 using System.Runtime.CompilerServices;
 
 namespace Tile2048
@@ -14,6 +15,7 @@ namespace Tile2048
             get => number;
             set
             {
+                new SoundPlayer(Properties.Resources.Grow).Play();
                 number = value;
                 RaisePropertyChanged();
             }
@@ -45,7 +47,8 @@ namespace Tile2048
 
         public Tile(int number, int row, int column)
         {
-            Number = number;
+            this.number = number;
+            RaisePropertyChanged("Number");
             Row = row;
             Column = column;
         }
