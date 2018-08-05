@@ -49,6 +49,11 @@ namespace Tile2048
             List<Point> availablePoints = allPoints.Except(Tiles.ToListOfPoints()).ToList();
             return availablePoints.ElementAt(rSpawnTile.Next(0, availablePoints.Count));
         }
+        private bool IsAllowedToSlide(/* direction enum?*/)
+        {
+            // check for specified direction if the slide is allowed.
+            return true;
+        }
         private int Get2Or4()
         {
             return rSpawnTile.Next(0, 100) >= 90 ? 4 : 2;
