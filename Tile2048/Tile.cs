@@ -23,8 +23,11 @@ namespace Tile2048
             get => row;
             set
             {
-                row = value;
-                RaisePropertyChanged();
+                if (row != value)
+                {
+                    row = value;
+                    RaisePropertyChanged();
+                }
             }
         }
         public int Column
@@ -32,8 +35,11 @@ namespace Tile2048
             get => column;
             set
             {
-                column = value;
-                RaisePropertyChanged();
+                if(column != value)
+                {
+                    column = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 
