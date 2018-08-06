@@ -42,11 +42,11 @@
                     <DataTemplate DataType="{x:Type local:Tile}">
                         <DataTemplate.Triggers>
                             <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                                <BeginStoryboard>
+                                <!--<BeginStoryboard>
                                     <Storyboard AutoReverse="True">
                                         <DoubleAnimation Storyboard.Target="{Binding}" Storyboard.TargetProperty="Opacity" From="1" To=".1" Duration="0:0:.3" />
                                     </Storyboard>
-                                </BeginStoryboard>
+                                </BeginStoryboard>-->
                                 <SoundPlayerAction Source="/Resources/Move.wav"/>
                             </EventTrigger>
                         </DataTemplate.Triggers>
