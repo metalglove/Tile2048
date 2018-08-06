@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace Tile2048
 {
@@ -14,18 +13,22 @@ namespace Tile2048
     }
     public static class DirectionExtension
     {
-        public static List<Tile> GetTilesToEvaluate(this Direction direction, GameState gameState, int decider)
+        public static void GetTilesToEvaluate(this Direction direction, GameState gameState, int decider, out List<Tile> tilesOnMainDecider)
         {
             switch (direction)
             {
                 case Direction.Left:
-                    return gameState.Where(item => item.Row == decider).ToList();
+                    tilesOnMainDecider = gameState.Where(item => item.Row == decider).ToList();
+                    break;
                 case Direction.Right:
-                    return gameState.Where(item => item.Row == decider).ToList();
+                    tilesOnMainDecider = gameState.Where(item => item.Row == decider).ToList();
+                    break;
                 case Direction.Up:
-                    return gameState.Where(item => item.Column == decider).ToList();
+                    tilesOnMainDecider = gameState.Where(item => item.Column == decider).ToList();
+                    break;
                 case Direction.Down:
-                    return gameState.Where(item => item.Column == decider).ToList();
+                    tilesOnMainDecider = gameState.Where(item => item.Column == decider).ToList();
+                    break;
                 default:
                     throw new ArgumentException("GetTilesToEvaluate faulted.");
             }
@@ -46,27 +49,25 @@ namespace Tile2048
                     throw new ArgumentException("NotOnLastCellOfDirectionToSlideTo faulted.");
             }
         }
-        public static GameState SetTheOnlyTileToTheLastCellOfDirection(this Direction direction, GameState gameState, List<Tile> tiles)
+        public static void SetTheOnlyTileToTheLastCellOfDirection(this Direction direction, ref GameState gameState, List<Tile> tiles)
         {
-            Tile onlyTile() => gameState.Single(tile => tile.Row == tiles[0].Row && tile.Column == tiles[0].Column);
             switch (direction)
             {
                 case Direction.Left:
-                    onlyTile().Column = 0;
+                    gameState.Single(tile => tile.Row == tiles[0].Row && tile.Column == tiles[0].Column).Column = 0;
                     break;
                 case Direction.Right:
-                    onlyTile().Column = 3;
+                    gameState.Single(tile => tile.Row == tiles[0].Row && tile.Column == tiles[0].Column).Column = 3;
                     break;
                 case Direction.Up:
-                    onlyTile().Row = 0;
+                    gameState.Single(tile => tile.Row == tiles[0].Row && tile.Column == tiles[0].Column).Row = 0;
                     break;
                 case Direction.Down:
-                    onlyTile().Row = 3;
+                    gameState.Single(tile => tile.Row == tiles[0].Row && tile.Column == tiles[0].Column).Row = 3;
                     break;
                 default:
                     throw new ArgumentException("SetTheOnlyTileToTheLastCellOfDirection faulted.");
             }
-            return gameState;
         }
         public static Func<Tile, bool> AnyTileOnDecider(this Direction direction, int decider)
         {
@@ -84,18 +85,22 @@ namespace Tile2048
                     throw new ArgumentException("AnyTileOnDecider faulted.");
             }
         }
-        public static Tile GetTile(this Direction direction, List<Tile> tiles, int mainDecider, int decider)
+        public static void GetTile(this Direction direction, List<Tile> tiles, int mainDecider, int decider, out Tile currentTile)
         {
             switch (direction)
             {
                 case Direction.Left:
-                    return tiles.SingleOrDefault(tile => tile.Column == decider && tile.Row == mainDecider);
+                    currentTile = tiles.Single(tile => tile.Column == decider && tile.Row == mainDecider);
+                    break;
                 case Direction.Right:
-                    return tiles.SingleOrDefault(tile => tile.Column == decider && tile.Row == mainDecider);
+                    currentTile = tiles.Single(tile => tile.Column == decider && tile.Row == mainDecider);
+                    break;
                 case Direction.Up:
-                    return tiles.SingleOrDefault(tile => tile.Row == decider && tile.Column == mainDecider);
+                    currentTile = tiles.Single(tile => tile.Row == decider && tile.Column == mainDecider);
+                    break;
                 case Direction.Down:
-                    return tiles.SingleOrDefault(tile => tile.Row == decider && tile.Column == mainDecider);
+                    currentTile = tiles.Single(tile => tile.Row == decider && tile.Column == mainDecider);
+                    break;
                 default:
                     throw new ArgumentException("GetTile faulted.");
             }
@@ -136,7 +141,7 @@ namespace Tile2048
                     throw new ArgumentException("OnSameLocationMinusDeepdecider faulted.");
             }
         }
-        public static Tile SetTileDecider(this Direction direction, Tile tile, int deepDecider)
+        public static void SetTileDecider(this Direction direction, ref Tile tile, int deepDecider)
         {
             switch (direction)
             {
@@ -155,7 +160,6 @@ namespace Tile2048
                 default:
                     throw new ArgumentException("SetTileDecider faulted.");
             }
-            return tile;
         }
         public static bool VerifyDeepDeciderHasReachedLastCell(this Direction direction, ref Tile tile, int deepDecider)
         {
@@ -183,18 +187,22 @@ namespace Tile2048
             }
             return returnValue;
         }
-        public static int GetDecider(this Direction direction)
+        public static void GetDecider(this Direction direction, out int decider)
         {
             switch (direction)
             {
                 case Direction.Left:
-                    return 1;
+                    decider = 1;
+                    break;
                 case Direction.Right:
-                    return 2;
+                    decider = 2;
+                    break;
                 case Direction.Up:
-                    return 1;
+                    decider = 1;
+                    break;
                 case Direction.Down:
-                    return 2;
+                    decider = 2;
+                    break;
                 default:
                     throw new ArgumentException("GetDecider faulted.");
             }
