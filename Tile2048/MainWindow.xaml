@@ -68,10 +68,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="UP" Click="SlideUp" Grid.Column="1" Grid.Row="0"/>
-            <Button Content="Left" Click="SlideLeft" Grid.Column="0" Grid.Row="1"/>
-            <Button Content="Down" Click="SlideDown" Grid.Column="1" Grid.Row="2"/>
-            <Button Content="Right" Click="SlideRight" Grid.Column="2" Grid.Row="1"/>
+            <Button Content="GO!" Click="AutoPlay" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </StackPanel>
 </Window>
