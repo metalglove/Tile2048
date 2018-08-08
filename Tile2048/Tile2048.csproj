@@ -102,5 +102,11 @@
   <ItemGroup>
     <Resource Include="Resources\Move.wav" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AI\AI.csproj">
+      <Project>{03714060-3cbd-46ae-baf1-e48978647b2a}</Project>
+      <Name>AI</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

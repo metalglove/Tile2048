@@ -30,10 +30,10 @@ namespace Tile2048
             score = Score;
         }
 
-        public new void Add(Tile item)
+        public new void Remove(Tile item)
         {
-            Score += item.Number;
-            base.Add(item);
+            Score += item.Number * 2;
+            base.Remove(item);
         }
         public List<Point> ToListOfPoints()
         {

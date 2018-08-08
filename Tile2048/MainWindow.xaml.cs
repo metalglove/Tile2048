@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AI;
 
 namespace Tile2048
 {
@@ -331,6 +330,7 @@ namespace Tile2048
 
         private void AutoPlay(object sender, RoutedEventArgs e)
         {
+            /*
             Random random = new Random();
             while (!IsGameOver())
             {
@@ -348,6 +348,9 @@ namespace Tile2048
                 }, System.Windows.Threading.DispatcherPriority.Input);
                 //Task.Delay(100).Wait();
             }
+            */
+            NeuralNetwork nn = new NeuralNetwork(16, 8, 4);
+            NeuralNetwork.ShowWeights(nn.GetWeights(), 10, 3, true);
         }
     }
 }
