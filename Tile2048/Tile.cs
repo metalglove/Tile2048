@@ -16,7 +16,7 @@ namespace Tile2048
             get => number;
             set
             {
-                new SoundPlayer(Properties.Resources.Grow).Play();
+                //new SoundPlayer(Properties.Resources.Grow).Play();
                 number = value;
                 RaisePropertyChanged();
             }

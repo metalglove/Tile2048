@@ -10,7 +10,12 @@ namespace Tile2048
 {
     public class GameState : ObservableCollection<Tile>, INotifyPropertyChanged, ICloneable
     {
+        private Random random;
+        private int actions = 0;
         private int score = 0;
+
+        public int HighestTile => this.Max(tile => tile.Number);
+        public List<Point> AllPoints => GenerateAllPossiblePoints();
         public int Score
         {
             get => score;
@@ -20,16 +25,33 @@ namespace Tile2048
                 RaisePropertyChanged();
             }
         }
+        public int Actions
+        {
+            get => actions;
+            set => actions = value;
+        }
+        public double Value
+        {
+            get => Score + Count - (actions * 0.123);
+        }
 
         public GameState()
         {
-
+            Initialize();
+            SpawnTile();
+            SpawnTile();
         }
-        public GameState(int Score, IEnumerable<Tile> tiles) : base(tiles)
+        public GameState(int Score, int Actions, IEnumerable<Tile> tiles) : base(tiles)
         {
             score = Score;
+            actions = Actions;
+            Initialize();
         }
 
+        private void Initialize()
+        {
+            random = new Random();
+        }
         public new void Remove(Tile item)
         {
             Score += item.Number * 2;
@@ -46,9 +68,64 @@ namespace Tile2048
         }
         public object Clone()
         {
-            return new GameState(Score, this.Select(tile => (Tile)tile.Clone()));
+            return new GameState(Score, Actions, this.Select(tile => (Tile)tile.Clone()));
         }
-
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                GameState gameState = (GameState)obj;
+                if (Count == gameState.Count && Score == gameState.Score)
+                {
+                    for (int i = 0; i < Count; i++)
+                    {
+                        if (gameState[i].Column != this[i].Column || gameState[i].Row != this[i].Row)
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() * 17 + this.Score.GetHashCode() * 17 + this.Count.GetHashCode() * 17 + this.Actions.GetHashCode() * 17;
+        }
+        public void SpawnTile()
+        {
+            int number = random.Next(0, 100) >= 90 ? 4 : 2;
+            Point position = GetAvailablePosition(this);
+            this.Add(new Tile(number, (int)position.X, (int)position.Y));
+        }
+        private Point GetAvailablePosition(GameState gameState)
+        {
+            List<Point> availablePoints = AllPoints.Except(gameState.ToListOfPoints()).ToList();
+            return availablePoints.ElementAt(random.Next(0, availablePoints.Count));
+        }
+        private static List<Point> GenerateAllPossiblePoints()
+        {
+            List<Point> allPoints = new List<Point>();
+            Enumerable.Range(0, 4).All(T =>
+            Enumerable.Range(0, 4).All(A =>
+            {
+                allPoints.Add(new Point(T, A));
+                return true;
+            }));
+            return allPoints;
+        }
+        public override string ToString()
+        {
+            return $"Score: {Score}, Actions: {Actions}, Highest tile: {HighestTile}, Value: {Value}";
+        }
         #region INotifyPropertyChanged Members
         public new event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged([CallerMemberName] string propertyName = "")

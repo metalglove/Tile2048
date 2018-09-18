@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using AI;
+using Tile2048.ReinforcementLearning;
 
 namespace Tile2048
 {
@@ -31,7 +33,6 @@ namespace Tile2048
             DataContext = this;
             allPoints = GenerateAllPossiblePoints();
             KeyDown += Slide;
-            StartGame();
         }
 
         private void Slide(object sender, KeyEventArgs e)
@@ -51,11 +52,6 @@ namespace Tile2048
         }
 
         #region Game
-        private void StartGame()
-        {
-            SpawnTile();
-            SpawnTile();
-        }
         private void SpawnTile()
         {
             int number = Get2Or4();
@@ -349,8 +345,18 @@ namespace Tile2048
                 //Task.Delay(100).Wait();
             }
             */
-            NeuralNetwork nn = new NeuralNetwork(16, 8, 4);
-            NeuralNetwork.ShowWeights(nn.GetWeights(), 10, 3, true);
+            //NeuralNetwork nn = new NeuralNetwork(16, 8, 4);
+            //NeuralNetwork.ShowWeights(nn.GetWeights(), 10, 3, true);
+            double highestResult = 0;
+            int i = 0;
+            while(highestResult < 50000)
+            {
+                GameEnvironment gameEnvironment = new GameEnvironment(new GameState());
+                GameState result = gameEnvironment.GetResult();
+                highestResult = highestResult < result.Score ? result.Score : highestResult;
+                Debug.WriteLine($"[{i++}] {result}");
+            }
+            
         }
     }
 }
