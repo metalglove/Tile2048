@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
-namespace Tile2048.ReinforcementLearning
+namespace Tile2048.Autoplayer
 {
     public class GameEnvironment
     {
-        private bool endReached = false;
         private GameState currentGameState;
         private List<InterpretedGameState> interpretedGameStates = new List<InterpretedGameState>();
 

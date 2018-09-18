@@ -56,8 +56,8 @@
     </ApplicationDefinition>
     <Compile Include="Direction.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="ReinforcementLearning\GameEnvironment.cs" />
-    <Compile Include="ReinforcementLearning\InterpretedGameState.cs" />
+    <Compile Include="Autoplayer\GameEnvironment.cs" />
+    <Compile Include="Autoplayer\InterpretedGameState.cs" />
     <Compile Include="Tile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

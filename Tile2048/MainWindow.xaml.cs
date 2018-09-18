@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using AI;
-using Tile2048.ReinforcementLearning;
+using Tile2048.Autoplayer;
 
 namespace Tile2048
 {

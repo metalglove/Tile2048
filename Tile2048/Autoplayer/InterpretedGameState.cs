@@ -1,4 +1,4 @@
-﻿namespace Tile2048.ReinforcementLearning
+﻿namespace Tile2048.Autoplayer
 {
     public class InterpretedGameState
     {
