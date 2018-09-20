@@ -103,12 +103,20 @@ namespace Tile2048
         public void SpawnTile()
         {
             int number = random.Next(0, 100) >= 90 ? 4 : 2;
-            Point position = GetAvailablePosition(this);
-            this.Add(new Tile(number, (int)position.X, (int)position.Y));
+            Point position = GetAvailablePosition();
+            Add(new Tile(number, (int)position.X, (int)position.Y));
         }
-        private Point GetAvailablePosition(GameState gameState)
+        public void SpawnTile(Point point, int number)
         {
-            List<Point> availablePoints = AllPoints.Except(gameState.ToListOfPoints()).ToList();
+            Add(new Tile(number, (int)point.X, (int)point.Y));
+        }
+        public List<Point> GetAvailablePositions()
+        {
+            return AllPoints.Except(ToListOfPoints()).ToList();
+        }
+        private Point GetAvailablePosition()
+        {
+            List<Point> availablePoints = GetAvailablePositions();
             return availablePoints.ElementAt(random.Next(0, availablePoints.Count));
         }
         private static List<Point> GenerateAllPossiblePoints()

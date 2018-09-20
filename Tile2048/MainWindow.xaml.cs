@@ -349,7 +349,7 @@ namespace Tile2048
             //NeuralNetwork.ShowWeights(nn.GetWeights(), 10, 3, true);
             double highestResult = 0;
             int i = 0;
-            while(highestResult < 50000)
+            while(highestResult < 400000)
             {
                 GameEnvironment gameEnvironment = new GameEnvironment(new GameState());
                 GameState result = gameEnvironment.GetResult();

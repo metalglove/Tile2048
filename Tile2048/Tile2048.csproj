@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ArrayPrinter.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Autoplayer\GameEnvironment.cs" />

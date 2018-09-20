@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -14,16 +16,39 @@ namespace Tile2048.Autoplayer
             currentGameState = startingState;
             while (!IsGameOver(currentGameState))
             {
-                InterpretedGameState interpretedGameState = Interpreter(currentGameState);
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                InterpretedGameState interpretedGameState = InterpreterV2(currentGameState);
+                stopwatch.Stop();
+                Debug.WriteLine($"Time Elapsed: {stopwatch.Elapsed}, Best Direction: {interpretedGameState.Direction}");
+                Debug.WriteLine($"Current Score {interpretedGameState.GameState.Score}, Highest Tile: {interpretedGameState.GameState.HighestTile}");
                 currentGameState = interpretedGameState.GameState;
+                PrintGame();
                 interpretedGameStates.Add(interpretedGameState);
             }
         }
 
         public GameState GetResult()
         {
+            PrintGame();
             return currentGameState;
         }
+
+        private void PrintGame()
+        {
+            string[,] mdArr = new string[4, 4];
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j <  4; j++)
+                    mdArr[i, j] = string.Empty;
+            int rowLength = mdArr.GetLength(0);
+            int colLength = mdArr.GetLength(1);
+            foreach (Tile item in currentGameState)
+            {
+                mdArr[item.Row, item.Column] = item.Number.ToString();
+            }
+            ArrayPrinter.PrintToConsole(mdArr);
+        }
+
         private InterpretedGameState Interpreter(GameState gameState)
         {
             // determine possible actions
@@ -38,6 +63,43 @@ namespace Tile2048.Autoplayer
 
             return bestGameState;
         }
+
+        private InterpretedGameState InterpreterV2(GameState gameState)
+        {
+            // get first possible gamestates
+            List<InterpretedGameState> possibleGameStates = GetPossibleGameStates(gameState);
+            List<InterpretedGameState> allPossibleGameStates = RecursiveCheck(possibleGameStates);
+            // find best reward for actions
+            double highestValue = allPossibleGameStates.Max(pgs => pgs.GameState.Value);
+
+            // upon choosing the best rewarded action, spawn a new tile
+            Direction bestDirection = allPossibleGameStates.First(pgs => pgs.GameState.Value == highestValue).Direction;
+            InterpretedGameState bestGameState = possibleGameStates.Single(gs => gs.Direction == bestDirection);
+            bestGameState.GameState.SpawnTile();
+            return bestGameState;
+        }
+        private List<InterpretedGameState> RecursiveCheck(List<InterpretedGameState> possibleGameStates)
+        {
+            if (possibleGameStates[0].Depth >= 3)
+            {
+                return possibleGameStates;
+            }
+            else
+            {
+                List<InterpretedGameState> returnlist = new List<InterpretedGameState>();
+                foreach (InterpretedGameState interpretedGameState in possibleGameStates)
+                {
+                    List<InterpretedGameState> allRandomInterpretedGameStates = GetAllRandomPossibleGameStates(interpretedGameState);
+                    foreach (InterpretedGameState randomInterpretedGameState in allRandomInterpretedGameStates)
+                    {
+                        randomInterpretedGameState.Depth++;
+                        List<InterpretedGameState> possibleGamesStatesFromRandomGameStates = GetPossibleGameStates(randomInterpretedGameState);
+                        returnlist.AddRange(possibleGamesStatesFromRandomGameStates);
+                    }
+                }
+                return RecursiveCheck(returnlist);
+            }
+        }
         private static List<InterpretedGameState> GetPossibleGameStates(GameState gameState)
         {
             List<InterpretedGameState> possibleGameStates = new List<InterpretedGameState>();
@@ -50,6 +112,37 @@ namespace Tile2048.Autoplayer
                 }
             }
             return possibleGameStates;
+        }
+        private static List<InterpretedGameState> GetPossibleGameStates(InterpretedGameState randomInterpretedGameState)
+        {
+            List<InterpretedGameState> possibleGameStates = new List<InterpretedGameState>();
+            foreach (Direction direction in new Direction[] { Direction.Left, Direction.Right, Direction.Up, Direction.Down })
+            {
+                InterpretedGameState newGameState = CopyAndSlideTo(randomInterpretedGameState.GameState, direction);
+                if (!Equals(newGameState, null))
+                {
+                    newGameState.Depth = randomInterpretedGameState.Depth;
+                    newGameState.Direction = randomInterpretedGameState.Direction;
+                    possibleGameStates.Add(newGameState);
+                }
+            }
+            return possibleGameStates;
+        }
+        private static List<InterpretedGameState> GetAllRandomPossibleGameStates(InterpretedGameState interpretedGameState)
+        {
+            List<InterpretedGameState> allGameStatesPossible = new List<InterpretedGameState>();
+            foreach (Point item in interpretedGameState.GameState.GetAvailablePositions())
+            {
+                AddGameStateToList(interpretedGameState, ref allGameStatesPossible, item, 2);
+                AddGameStateToList(interpretedGameState, ref allGameStatesPossible, item, 4);
+            }
+            return allGameStatesPossible;
+        }
+        private static void AddGameStateToList(InterpretedGameState interpretedGameState, ref List<InterpretedGameState> allGameStatesPossible, Point item, int number)
+        {
+            GameState clonedState2 = (GameState)interpretedGameState.GameState.Clone();
+            clonedState2.SpawnTile(item, number);
+            allGameStatesPossible.Add(new InterpretedGameState(clonedState2, interpretedGameState.Direction) { Depth = interpretedGameState.Depth });
         }
         private static InterpretedGameState CopyAndSlideTo(GameState gameState, Direction direction)
         {
